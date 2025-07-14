@@ -32,3 +32,9 @@ steps:
 # Specify the final image for viewing in the build details.
 images:
   - 'us-central1-docker.pkg.dev/final-bin-pack/my-app-repo/frontend-service:latest'
+
+# ===================================================================
+# THIS IS THE NEW PART THAT FIXES THE ERROR
+# ===================================================================
+options:
+  logging: CLOUD_LOGGING_ONLY
