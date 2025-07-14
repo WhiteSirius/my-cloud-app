@@ -1,0 +1,34 @@
+# This file tells Google Cloud Build how to deploy our app.
+steps:
+  # Step 1: Build the Docker container image.
+  # It uses the Dockerfile from the './frontend' directory.
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/final-bin-pack/my-app-repo/frontend-service:latest'
+      - './frontend'
+    id: 'Build Frontend Image'
+
+  # Step 2: Push the container image to our private Artifact Registry.
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'us-central1-docker.pkg.dev/final-bin-pack/my-app-repo/frontend-service:latest']
+    id: 'Push Frontend Image'
+
+  # Step 3: Deploy this new image to our Cloud Run service.
+  # It will create a service named 'frontend-service' if it doesn't exist yet.
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'frontend-service' # This is the name for your Cloud Run service.
+      - '--image=us-central1-docker.pkg.dev/final-bin-pack/my-app-repo/frontend-service:latest'
+      - '--region=us-central1'
+      - '--platform=managed'
+      - '--allow-unauthenticated' # This makes your website public!
+    id: 'Deploy to Cloud Run'
+
+# Specify the final image for viewing in the build details.
+images:
+  - 'us-central1-docker.pkg.dev/final-bin-pack/my-app-repo/frontend-service:latest'
