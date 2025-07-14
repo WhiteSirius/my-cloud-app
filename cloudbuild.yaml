@@ -14,7 +14,7 @@ steps:
     args: ['push', 'us-central1-docker.pkg.dev/final-bin-pack/my-app-repo/frontend-service:latest']
     id: 'Push Frontend Image'
 
-  # Step 3: Deploy this new image to our Cloud Run service. THIS STEP WAS FAILING.
+  # Step 3: Deploy this new image to our Cloud Run service.
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
@@ -25,6 +25,7 @@ steps:
       - '--region=us-central1'
       - '--platform=managed'
       - '--allow-unauthenticated'
+      - '--port=80' # <-- THIS IS THE FIX. Tell Cloud Run our container listens on port 80.
     id: 'Deploy to Cloud Run'
 
 # Specify the final image for viewing in the build details.
